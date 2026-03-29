@@ -140,6 +140,11 @@ def sync():
                         print(f"WARN: Could not set parent for '{name}': {e}")
 
             print("Sync completed successfully.")
+            try:
+                with open("/tmp/last_sync.ok", "w") as f:
+                    f.write(str(int(time.time())))
+            except Exception:
+                pass
 
     except Exception as e:
         print("!!! Error during sync !!!")

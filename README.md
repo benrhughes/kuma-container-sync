@@ -52,6 +52,7 @@ docker run -d \
 Notes:
 - Ensure `DOCKER_HOST_NAME` matches an existing Docker Host in Uptime Kuma.
 - If `NOTIFICATION_NAME` doesn’t exist, monitors will be created without notifications.
+ - Image includes a Docker `HEALTHCHECK` that fails if no successful sync has occurred recently (threshold ≈ `2 * SYNC_INTERVAL + 60s`).
  
  Architectures: Multi-arch images are published (linux/amd64, linux/arm64). Docker will select the right variant automatically.
 
@@ -81,6 +82,9 @@ python monitor.py
 - [Dockerfile](Dockerfile): Container build.
 - [requirements.txt](requirements.txt): Python dependencies.
 
+## Compatibility
+- This tool targets Uptime Kuma 2.x. Monitor group creation currently uses a low-level client call because a public helper may not be available in all `uptime-kuma-api` versions used in the wild. Dependencies are constrained in [requirements.txt](requirements.txt) to reduce breakage.
+
 ## CI: Build and Push to GHCR
 This repo includes a GitHub Actions workflow that builds and pushes an image to GitHub Container Registry (GHCR) on tag push (e.g., `v1.0.0`). It uses the built-in `GITHUB_TOKEN` with `packages: write` permission—no extra secrets required.
 
@@ -101,3 +105,6 @@ docker pull ghcr.io/benrhughes/kuma-container-sync:latest
 - Optional include/exclude by container labels.
 - Auto-create Docker Host in Kuma when missing (if API permits).
 - Health metrics and structured logs.
+
+## License
+Released under the AGPL-3.0 license. See [LICENSE](LICENSE).

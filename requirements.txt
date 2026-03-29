@@ -1,3 +1,3 @@
-uptime-kuma-api>=1.2.1
-docker
-python-dotenv
+uptime-kuma-api>=1.2.1,<2.0.0
+docker>=6,<8
+python-dotenv>=1.0,<2.0.0
