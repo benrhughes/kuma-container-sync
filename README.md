@@ -46,7 +46,7 @@ docker run -d \
   -e KUMA_GROUP_NAME="Your Host Group" \
   -e NOTIFICATION_NAME="Your Notification" \
   -e SYNC_INTERVAL=300 \
-  ghcr.io/OWNER/kuma-container-sync:latest
+  ghcr.io/benrhughes/kuma-container-sync:latest
 ```
 
 Notes:
