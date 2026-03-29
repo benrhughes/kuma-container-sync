@@ -10,7 +10,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 KUMA_URL = os.getenv("KUMA_URL", "http://uptime-kuma:3001")
-KUMA_TOKEN = os.getenv("KUMA_TOKEN")
+KUMA_USER = os.getenv("KUMA_USER")
+KUMA_PASS = os.getenv("KUMA_PASS")
 DOCKER_HOST_NAME = os.getenv("DOCKER_HOST_NAME")
 NOTIFICATION_NAME = os.getenv("NOTIFICATION_NAME")
 SYNC_INTERVAL = int(os.getenv("SYNC_INTERVAL", "300"))
@@ -45,8 +46,8 @@ def sync():
         # Connect to Uptime Kuma
         print(f"Connecting to Uptime Kuma at {KUMA_URL}...")
         with UptimeKumaApi(KUMA_URL) as api:
-            print("Logging in with API token...")
-            api.login(token=KUMA_TOKEN)
+            print(f"Logging in as {KUMA_USER}...")
+            api.login(KUMA_USER, KUMA_PASS)
             
             # Get Docker Host ID
             print(f"Looking for Docker Host: {DOCKER_HOST_NAME}...")
@@ -154,10 +155,10 @@ def sync():
 if __name__ == "__main__":
     print("Kuma Container Sync starting up...")
     print(f"KUMA_URL: {KUMA_URL}")
-    print("Using API token for authentication.")
+    print(f"KUMA_USER: {KUMA_USER}")
     
-    if not KUMA_TOKEN:
-        print("CRITICAL Error: KUMA_TOKEN must be set.")
+    if not KUMA_USER or not KUMA_PASS:
+        print("CRITICAL Error: KUMA_USER and KUMA_PASS must be set.")
         exit(1)
     if not DOCKER_HOST_NAME:
         print("CRITICAL Error: DOCKER_HOST_NAME must be set.")
