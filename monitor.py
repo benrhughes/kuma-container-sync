@@ -46,7 +46,7 @@ def sync():
         print(f"Connecting to Uptime Kuma at {KUMA_URL}...")
         with UptimeKumaApi(KUMA_URL) as api:
             print("Logging in with API token...")
-            api.login_by_token(KUMA_TOKEN)
+            api.login(token=KUMA_TOKEN)
             
             # Get Docker Host ID
             print(f"Looking for Docker Host: {DOCKER_HOST_NAME}...")
