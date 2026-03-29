@@ -17,8 +17,7 @@ Auto-discovers Docker containers on a host and reconciles Uptime Kuma Docker mon
 
 ## Environment Variables
 - `KUMA_URL` (default: `http://uptime-kuma:3001`): Base URL of your Uptime Kuma instance.
-- `KUMA_USER` (required): Uptime Kuma username.
-- `KUMA_PASS` (required): Uptime Kuma password.
+- `KUMA_TOKEN` (required): Uptime Kuma API token.
 - `DOCKER_HOST_NAME` (required): Name of the Docker Host entry in Uptime Kuma to associate container monitors with.
 - `KUMA_GROUP_NAME` (default: value of `DOCKER_HOST_NAME`): Monitor group name to place all container monitors under.
 - `NOTIFICATION_NAME` (optional): Name of an existing Uptime Kuma notification to attach to created monitors. If not found or not provided, monitors are created without notifications.
@@ -40,8 +39,7 @@ docker run -d \
   --name kuma-container-sync \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -e KUMA_URL="http://uptime-kuma:3001" \
-  -e KUMA_USER="your-user" \
-  -e KUMA_PASS="your-pass" \
+  -e KUMA_TOKEN="your-api-token" \
   -e DOCKER_HOST_NAME="Your Docker Host" \
   -e KUMA_GROUP_NAME="Your Host Group" \
   -e NOTIFICATION_NAME="Your Notification" \
@@ -71,8 +69,7 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 export KUMA_URL="http://uptime-kuma:3001"
-export KUMA_USER="your-user"
-export KUMA_PASS="your-pass"
+export KUMA_TOKEN="your-api-token"
 export DOCKER_HOST_NAME="Your Docker Host"
 python monitor.py
 ```
