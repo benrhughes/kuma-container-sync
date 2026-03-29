@@ -12,6 +12,7 @@ load_dotenv()
 KUMA_URL = os.getenv("KUMA_URL", "http://uptime-kuma:3001")
 KUMA_USER = os.getenv("KUMA_USER")
 KUMA_PASS = os.getenv("KUMA_PASS")
+KUMA_TIMEOUT = float(os.getenv("KUMA_TIMEOUT", "30"))
 DOCKER_HOST_NAME = os.getenv("DOCKER_HOST_NAME")
 NOTIFICATION_NAME = os.getenv("NOTIFICATION_NAME")
 SYNC_INTERVAL = int(os.getenv("SYNC_INTERVAL", "300"))
@@ -44,8 +45,8 @@ def sync():
         print(f"Found {len(container_names)} containers on host.")
 
         # Connect to Uptime Kuma
-        print(f"Connecting to Uptime Kuma at {KUMA_URL}...")
-        with UptimeKumaApi(KUMA_URL) as api:
+        print(f"Connecting to Uptime Kuma at {KUMA_URL} with timeout {KUMA_TIMEOUT}...")
+        with UptimeKumaApi(KUMA_URL, timeout=KUMA_TIMEOUT) as api:
             print(f"Logging in as {KUMA_USER}...")
             api.login(KUMA_USER, KUMA_PASS)
             
