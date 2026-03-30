@@ -23,6 +23,7 @@ Auto-discovers Docker containers on a host and reconciles Uptime Kuma Docker mon
 - `KUMA_GROUP_NAME` (default: value of `DOCKER_HOST_NAME`): Monitor group name to place all container monitors under.
 - `NOTIFICATION_NAME` (optional): Name of an existing Uptime Kuma notification to attach to created monitors. If not found or not provided, monitors are created without notifications.
 - `SYNC_INTERVAL` (default: `300`): Seconds to wait between sync runs.
+- `LOGIN_RETRIES` (default: `5`): Number of retry attempts for logging into Uptime Kuma.
 
 See [monitor.py](monitor.py) for details.
 
@@ -56,6 +57,35 @@ Notes:
  
  Architectures: Multi-arch images are published (linux/amd64, linux/arm64). Docker will select the right variant automatically.
 
+## Docker Compose Example
+
+Create a `docker-compose.yml` file:
+
+```yaml
+services:
+  kuma-container-sync:
+    image: ghcr.io/benrhughes/kuma-container-sync:latest
+    container_name: kuma-container-sync
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - KUMA_URL=http://uptime-kuma:3001
+      - KUMA_USER=your-user
+      - KUMA_PASS=your-pass
+      - DOCKER_HOST_NAME=Your Docker Host
+      # Optional environment variables
+      # - KUMA_GROUP_NAME=Your Host Group
+      # - NOTIFICATION_NAME=Your Notification
+      # - SYNC_INTERVAL=300
+      # - LOGIN_RETRIES=5
+    restart: unless-stopped
+```
+
+Run it with:
+```bash
+docker compose up -d
+```
+
 ## Create a Docker Host in Uptime Kuma
 Before running this tool, create a Docker Host entry in your Uptime Kuma instance:
 
@@ -84,27 +114,6 @@ python monitor.py
 
 ## Compatibility
 - This tool targets Uptime Kuma 2.x. Monitor group creation currently uses a low-level client call because a public helper may not be available in all `uptime-kuma-api` versions used in the wild. Dependencies are constrained in [requirements.txt](requirements.txt) to reduce breakage.
-
-## CI: Build and Push to GHCR
-This repo includes a GitHub Actions workflow that builds and pushes an image to GitHub Container Registry (GHCR) on tag push (e.g., `v1.0.0`). It uses the built-in `GITHUB_TOKEN` with `packages: write` permission—no extra secrets required.
-
-Tag and push to trigger:
-
-```bash
-git tag v1.0.0
-git push origin v1.0.0
-```
-
-Pull the image 
-
-```bash
-docker pull ghcr.io/benrhughes/kuma-container-sync:latest
-```
-
-## Roadmap / Ideas
-- Optional include/exclude by container labels.
-- Auto-create Docker Host in Kuma when missing (if API permits).
-- Health metrics and structured logs.
 
 ## License
 Released under the AGPL-3.0 license. See [LICENSE](LICENSE).

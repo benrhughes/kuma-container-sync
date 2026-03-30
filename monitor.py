@@ -16,6 +16,7 @@ KUMA_TIMEOUT = float(os.getenv("KUMA_TIMEOUT", "30"))
 DOCKER_HOST_NAME = os.getenv("DOCKER_HOST_NAME")
 NOTIFICATION_NAME = os.getenv("NOTIFICATION_NAME")
 SYNC_INTERVAL = int(os.getenv("SYNC_INTERVAL", "300"))
+LOGIN_RETRIES = int(os.getenv("LOGIN_RETRIES", "5"))
 
 # Monitor Group name (defaults to host name)
 KUMA_GROUP_NAME = os.getenv("KUMA_GROUP_NAME", DOCKER_HOST_NAME)
@@ -48,7 +49,17 @@ def sync():
         print(f"Connecting to Uptime Kuma at {KUMA_URL} with timeout {KUMA_TIMEOUT}...")
         with UptimeKumaApi(KUMA_URL, timeout=KUMA_TIMEOUT) as api:
             print(f"Logging in as {KUMA_USER}...")
-            api.login(KUMA_USER, KUMA_PASS)
+            for attempt in range(1, LOGIN_RETRIES + 1):
+                try:
+                    api.login(KUMA_USER, KUMA_PASS)
+                    break
+                except Exception as e:
+                    if attempt < LOGIN_RETRIES:
+                        print(f"Login failed (attempt {attempt}/{LOGIN_RETRIES}): {e}. Retrying in 5 seconds...")
+                        time.sleep(5)
+                    else:
+                        print(f"CRITICAL: Login failed after {LOGIN_RETRIES} attempts.")
+                        raise
             
             # Get Docker Host ID
             print(f"Looking for Docker Host: {DOCKER_HOST_NAME}...")
